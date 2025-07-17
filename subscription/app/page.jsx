@@ -21,9 +21,13 @@ export default function HomePage() {
 			<div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-10 max-w-4/5 mx-auto">
 				<div className="mapbg mx-auto mt-10 flex w-4/5 flex-col items-center justify-center gap-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl p-4">
 					<Image src={"https://picsum.photos/seed/1/600/400"} width={"600"} height={"400"} alt="Placeholder text" className="rounded-lg w-full" />
+					<h2 className="text-2xl font-semibold">Demo one</h2>
+					<p>Description of features here</p>
 				</div>
 				<div className="mapbg mx-auto mt-10 flex w-4/5 flex-col items-center justify-center gap-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl p-4">
 					<Image src={"https://picsum.photos/seed/2/600/400"} width={"600"} height={"400"} alt="Placeholder text" className="rounded-lg w-full" />
+					<h2 className="text-2xl font-semibold">Demo two</h2>
+					<p>Description of features here</p>
 				</div>
 			</div>
 		</>

@@ -37,9 +37,12 @@ export default function RootLayout({ children }) {
 								<div className="bg-noise absolute w-full h-full rounded-b-xl m-0 p-0 left-0 top-0">
 								</div>
 								<div className="flex flex-row items-center justify-between">
-									<div className="relative z-10 flex flex-row justify-start gap-2">
+									<div className="relative z-10 flex flex-row justify-start gap-4">
 										<Link href={"/"} className="hover:underline font-semibold text-lg text-accent-foreground">
 											Home
+										</Link>
+										<Link href={"/dashboard"} className="hover:underline font-semibold text-lg text-accent-foreground">
+											Dashboard
 										</Link>
 									</div>
 									<div className="relative z-10 flex flex-row-reverse justify-end gap-2">
