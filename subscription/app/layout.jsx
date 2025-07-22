@@ -32,8 +32,8 @@ export default function RootLayout({ children }) {
 					className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 				>
 					<ThemeProvider storageKey="theme" defaultTheme="system" enableSystem={true} attribute={"class"}>
-						<div className="w-full max-w-[15cm] mx-auto rounded-b-xl border-2 border-t-0 border-accent sticky top-0 z-50">
-							<div className="relative py-2 px-4 overflow-hidden bg-accent/80 backdrop-blur-md rounded-b-lg">
+						<div className="w-full max-w-[15cm] mx-auto rounded-b-xl border-2 border-t-0 dark:border-accent border-accent-foreground/20 sticky top-0 z-auto">
+							<div className="relative py-2 px-4 overflow-hidden dark:bg-accent/80 bg-accent-foreground/15 backdrop-blur-md rounded-b-lg">
 								<div className="bg-noise absolute w-full h-full rounded-b-xl m-0 p-0 left-0 top-0">
 								</div>
 								<div className="flex flex-row items-center justify-between">
