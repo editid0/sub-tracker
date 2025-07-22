@@ -61,6 +61,9 @@ export default function RootLayout({ children }) {
 												<LoaderCircle className="animate-spin" />
 											</Button>
 										</ClerkLoading>
+										<Link href={"/settings"} className="hover:underline font-semibold text-lg text-accent-foreground">
+											Settings
+										</Link>
 									</div>
 								</div>
 							</div>

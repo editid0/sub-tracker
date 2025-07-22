@@ -1,6 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Space_Mono } from "next/font/google";
 import Image from "next/image";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog"
 
 const space = Space_Mono({
 	variable: "--font-space-mono",
@@ -8,9 +16,24 @@ const space = Space_Mono({
 	weight: ["400", "700"],
 });
 
-export default function HomePage() {
+export default async function HomePage(context) {
+	const { searchParams } = context;
+	const som = (await searchParams).som || "false";
 	return (
 		<>
+			<Dialog defaultOpen={som === "true"}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Notes for testers and voters</DialogTitle>
+						<DialogDescription>
+							Hello, if you are testing this site or voting on it,
+							please press the sign in button and pick a random username
+							and password, the auth provider I am using doesn't have demo
+							accounts.
+						</DialogDescription>
+					</DialogHeader>
+				</DialogContent>
+			</Dialog>
 			<div className="mapbg mx-auto mt-10 flex min-h-[10cm] md:min-h-[15cm] w-4/5 flex-col items-center justify-center gap-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl">
 				<h1 className={"text-2xl md:text-8xl text-center font-semibold " + space.className}>Subscription Tracker</h1>
 				<p className={"md:text-3xl text-center " + space.className}>Track your subscriptions with ease, for free.</p>
