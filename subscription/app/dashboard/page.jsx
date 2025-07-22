@@ -10,6 +10,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import InputForm from "./inputForm";
 
 const funnel_sans = Funnel_Sans({
     variable: "--font-funnel-sans",
@@ -86,7 +87,7 @@ export default async function DashboardPage() {
                         className="flex relative flex-col items-start bg-accent/10 p-4 rounded-lg border-2 border-accent-foreground/40 shadow-md h-40 min-w-0 backdrop-blur-md"
                     >
                         <h3 className="text-lg font-semibold">Add subscription</h3>
-                        <Dialog>
+                        <Dialog defaultOpen={true}>
                             <Button className={"bottom-[1rem] absolute cursor-pointer"} asChild>
                                 <DialogTrigger>
                                     Add
@@ -94,12 +95,9 @@ export default async function DashboardPage() {
                             </Button>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Are you absolutely sure?</DialogTitle>
-                                    <DialogDescription>
-                                        This action cannot be undone. This will permanently delete your account
-                                        and remove your data from our servers.
-                                    </DialogDescription>
+                                    <DialogTitle>Add a subscription</DialogTitle>
                                 </DialogHeader>
+                                <InputForm />
                             </DialogContent>
                         </Dialog>
                     </div>
