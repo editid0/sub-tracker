@@ -17,6 +17,19 @@ export default function DashboardPage() {
     }));
     // Sort payments by date
     payments.sort((a, b) => a.date - b.date);
+    // Group payments by week
+    const groupedPayments = payments.reduce((acc, payment) => {
+        const weekStart = payment.date.clone().startOf('week');
+        const weekKey = weekStart.format('YYYY-MM-DD');
+        if (!acc[weekKey]) {
+            acc[weekKey] = [];
+        }
+        acc[weekKey].push(payment);
+        return acc;
+    }, {});
+    function roundValue(value) {
+        return Math.round(value * 100) / 100;
+    };
     return (
         <div className="w-full px-2 mt-4">
             <div className="mapbg max-w-[30cm] mx-auto w-full md:w-1/2 min-w-fit py-4 px-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl">
@@ -26,11 +39,11 @@ export default function DashboardPage() {
             <div className="mt-8 max-w-[30cm] flex flex-col sm:flex-row items-center justify-center gap-4 w-full md:w-1/2 mx-auto">
                 <div className="mapbg w-full relative border-2 border-accent-foreground/40 bg-accent/30 shadow-xl rounded-2xl p-4">
                     <h2 className="text-xl font-semibold">This Week</h2>
-                    <p className={"text-6xl " + funnel_sans.className}>£0.00</p>
+                    <p className={"text-6xl " + funnel_sans.className}>£{roundValue(groupedPayments[moment().startOf('week').format('YYYY-MM-DD')]?.reduce((acc, payment) => acc + payment.amount, 0) ?? 0)}</p>
                 </div>
                 <div className="mapbg w-full relative border-2 border-accent-foreground/40 bg-accent/30 shadow-xl rounded-2xl p-4">
                     <h2 className="text-xl font-semibold">Next Week</h2>
-                    <p className={"text-6xl " + funnel_sans.className}>£12.99</p>
+                    <p className={"text-6xl " + funnel_sans.className}>£{roundValue(groupedPayments[moment().add(1, 'week').startOf('week').format('YYYY-MM-DD')]?.reduce((acc, payment) => acc + payment.amount, 0) ?? 0)}</p>
                 </div>
             </div>
             <div className="mapbg max-w-[30cm] w-full md:w-1/2 mx-auto mt-8 p-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl">
@@ -39,7 +52,7 @@ export default function DashboardPage() {
                     {payments.map(payment => (
                         <div
                             key={payment.id}
-                            className="flex relative flex-col items-start bg-accent/20 p-4 rounded-lg border-2 border-accent-foreground/40 shadow-md h-40 min-w-0"
+                            className="flex relative flex-col items-start bg-accent/10 p-4 rounded-lg border-2 border-accent-foreground/40 shadow-md h-40 min-w-0 backdrop-blur-md"
                         >
                             <h3 className="text-lg font-semibold">{payment.name}</h3>
                             <span>{payment.date.format('dddd Do MMMM YYYY')}</span>
