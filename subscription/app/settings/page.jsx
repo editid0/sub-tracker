@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -34,14 +34,11 @@ export default function SettingsPage() {
         }
     }, [currency, isLoaded, user]);
 
-    // Example of a currency object:
-    // GBP: { name: "British Pound", units: {"major": {"symbol": "£"}} }
-    // I want an array of currency codes, and major units
-    const currencyOptions = Object.entries(currencies).map(([code, data]) => ({
-        code,
-        name: data.name,
-        symbol: data.units.major.symbol,
-    }));
+    const currencies = {
+        "USD": { name: "US Dollar", symbol: "$" },
+        "EUR": { name: "Euro", symbol: "€" },
+        "GBP": { name: "British Pound", symbol: "£" },
+    }
 
     return (
         <div className="w-full px-2 mt-4">
@@ -58,9 +55,9 @@ export default function SettingsPage() {
                             <SelectValue placeholder="Select currency" />
                         </SelectTrigger>
                         <SelectContent>
-                            {currencyOptions.map((option) => (
-                                <SelectItem key={option.code} value={option.code}>
-                                    {option.name} ({option.symbol})
+                            {Object.entries(currencies).map(([code, { name, symbol }]) => (
+                                <SelectItem key={code} value={code}>
+                                    {name} ({symbol})
                                 </SelectItem>
                             ))}
                         </SelectContent>

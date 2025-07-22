@@ -1,9 +1,15 @@
 import moment from "moment/moment";
-import { Separator } from "@/components/ui/separator"
 import { Funnel_Sans } from "next/font/google";
-import currencies from 'world-currencies';
 import { currentUser } from '@clerk/nextjs/server'
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 const funnel_sans = Funnel_Sans({
     variable: "--font-funnel-sans",
@@ -35,9 +41,10 @@ export default async function DashboardPage() {
         let rounded = Math.round(value * 100) / 100;
         return rounded.toFixed(2);
     };
-    function codeToSymbol(code) {
-        const currency = currencies[code];
-        return currency ? currency.units.major.symbol : code;
+    const currencies = {
+        "USD": { units: { major: { symbol: "$" } } },
+        "EUR": { units: { major: { symbol: "€" } } },
+        "GBP": { units: { major: { symbol: "£" } } },
     }
     function getSymbol() {
         if (!user) return "£"; // Default to GBP if no user
@@ -79,7 +86,22 @@ export default async function DashboardPage() {
                         className="flex relative flex-col items-start bg-accent/10 p-4 rounded-lg border-2 border-accent-foreground/40 shadow-md h-40 min-w-0 backdrop-blur-md"
                     >
                         <h3 className="text-lg font-semibold">Add subscription</h3>
-                        <Button className={"bottom-[1rem] absolute cursor-pointer"}>Add</Button>
+                        <Dialog>
+                            <Button className={"bottom-[1rem] absolute cursor-pointer"} asChild>
+                                <DialogTrigger>
+                                    Add
+                                </DialogTrigger>
+                            </Button>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                    <DialogDescription>
+                                        This action cannot be undone. This will permanently delete your account
+                                        and remove your data from our servers.
+                                    </DialogDescription>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
             </div>
