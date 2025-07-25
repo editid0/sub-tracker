@@ -45,7 +45,7 @@ export default function RootLayout({ children }) {
 											Dashboard
 										</Link>
 									</div>
-									<div className="relative z-10 flex flex-row-reverse justify-end gap-2">
+									<div className="relative z-10 flex flex-row-reverse justify-end gap-4">
 										<ClerkLoaded>
 											<SignedIn>
 												<UserButton userProfileMode="modal" />
