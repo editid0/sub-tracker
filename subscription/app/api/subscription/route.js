@@ -1,4 +1,6 @@
+import { getAuth } from "@clerk/nextjs/server";
 import moment from "moment-timezone";
+import { Pool } from "pg";
 
 const allowed_frequencies = [
     "daily",
@@ -25,7 +27,16 @@ const allowed_status = [
     "cancelled",
 ]
 
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT || 5432,
+});
+
 export async function POST(req) {
+    const { userId } = getAuth(req);
     const body = await req.json();
     console.log("Received body:", body);
     var { name, amount, date, frequency, businessDaysOnly, notes, category, paymentMethod, status, autoRenew, finalDate } = body;
@@ -80,7 +91,10 @@ export async function POST(req) {
     if (typeof businessDaysOnly !== "boolean") {
         return new Response(JSON.stringify({ error: "Business days only must be a boolean" }), { status: 400 });
     }
-    if (!/^(?:(?!\n{4,})[a-zA-Z0-9 .,!?@#$%^&*()_+\-=\[\]{}|\\;:'",<>\/`~\n])*$ /.test(notes)) {
+    if (notes && notes.length > 500) {
+        return new Response(JSON.stringify({ error: "Notes cannot exceed 500 characters" }), { status: 400 });
+    }
+    if (notes && !/^(?:(?!\n{4,})[a-zA-Z0-9 .,!?@#$%^&*()_+\-=\[\]{}|\\;:'",<>\/`~\n])*$ /.test(notes)) {
         return new Response(JSON.stringify({ error: "Notes contain invalid characters" }), { status: 400 });
     }
     if (!allowed_categories.includes(category)) {
@@ -104,6 +118,47 @@ export async function POST(req) {
     if (finalDate && moment(finalDate).isBefore(date)) {
         return new Response(JSON.stringify({ error: "Final date cannot be before the start date" }), { status: 400 });
     }
+    // putting this here for future refrence
+    // CREATE TABLE subscriptions (
+    // id SERIAL PRIMARY KEY,
+    // name TEXT NOT NULL,
+    // amount NUMERIC(10, 2) NOT NULL,
+    // start_date TIMESTAMPTZ NOT NULL,
+    // frequency TEXT NOT NULL,
+    // business_days_only BOOLEAN NOT NULL,
+    // notes TEXT,
+    // category TEXT NOT NULL,
+    // payment_method TEXT NOT NULL, 
+    // status TEXT NOT NULL, 
+    // auto_renew BOOLEAN NOT NULL,
+    // final_date TIMESTAMPTZ,
+    // userid TEXT NOT NULL
+    // );
+    try {
+        const query = `
+            INSERT INTO subscriptions (name, amount, start_date, frequency, business_days_only, notes, category, payment_method, status, auto_renew, final_date, userid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        `;
+        const values = [
+            name,
+            amount,
+            date.toISOString(),
+            frequency,
+            businessDaysOnly,
+            notes || null,
+            category,
+            paymentMethod,
+            status,
+            autoRenew,
+            finalDate ? moment(finalDate).toISOString() : null,
+            userId
+        ];
+        await pool.query(query, values);
+    } catch (error) {
+        console.error("Database error:", error);
+        return new Response(JSON.stringify({ error: "Database error" }), { status: 500 });
+    }
+
     return new Response(JSON.stringify({ success: true }), {
         status: 200,
     });

@@ -11,26 +11,122 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import InputForm from "./inputForm";
+import { Pool } from "pg";
+import { Pencil, Search } from "lucide-react";
+import Link from "next/link";
 
 const funnel_sans = Funnel_Sans({
     variable: "--font-funnel-sans",
     subsets: ["latin"],
 });
 
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT || 5432,
+});
+
+function processData(payments) {
+    // This function will take in data, work out if it's coming up soon, and return it in a useful furnat
+    var important_payments = [];
+    // need to output date, id, amount, name
+    payments.forEach(payment => {
+        var { date, id, amount, name, frequency, business_days_only, final_date, auto_renew } = payment;
+        date = moment(date);
+        if (final_date) {
+            final_date = moment(final_date);
+        } else {
+            final_date = null;
+        }
+        if (final_date && final_date.isBefore(moment())) {
+            console.log("Skipping payment with id:", id, "as it has already ended.");
+            return; // the subscription isnt active
+        }
+        if (!auto_renew) {
+            console.log("Skipping payment with id:", id, "as it is not set to auto-renew.");
+            return; // the payment isnt gonna renew so ignore
+        }
+        // using the date, add the frequency, and check if any occur in the next 14 days
+        var next_payment_date = date.clone();
+        if (!date.isBefore(moment())) {
+            next_payment_date = date.clone(); // if the date is in the future, use that as the next payment date
+        } else {
+            switch (frequency) {
+                case 'daily':
+                    next_payment_date.add(1, 'days');
+                    break;
+                case 'weekly':
+                    next_payment_date.add(1, 'weeks');
+                    break;
+                case 'bi-weekly':
+                    next_payment_date.add(2, 'weeks');
+                    break;
+                case 'monthly':
+                    next_payment_date.add(1, 'months');
+                    break;
+                case 'quarterly':
+                    next_payment_date.add(1, 'quarter');
+                    break;
+                case 'yearly':
+                    next_payment_date.add(1, 'years');
+                    break;
+                case 'one-time':
+                    next_payment_date = date.clone(); // one-time payments are just the date they were created
+                    break;
+                default:
+                    console.log("Skipping payment with id:", id, "as it has an invalid frequency:", frequency);
+                    return;
+            }
+        }
+        if (!next_payment_date.isBefore(moment().add(14, 'days'))) {
+            console.log(next_payment_date.format('DD-MM-YYYY'), "is not within the next 14 days.");
+            console.log("Skipping payment with id:", id, "as it is not coming up in the next 14 days.");
+            return; // the payment is not coming up soon
+        }
+        // if the payment is only on business days, check if the next payment date is a business day, and add days until it isn't
+        if (business_days_only) {
+            while (next_payment_date.isoWeekday() > 5) { // 6 = Saturday, 7 = Sunday
+                next_payment_date.add(1, 'days');
+            }
+        }
+        important_payments.push({
+            date: next_payment_date,
+            id: id,
+            amount: parseFloat(amount),
+            name: name,
+            meta: payment
+        });
+    });
+    return important_payments;
+}
+
 export default async function DashboardPage() {
     const user = await currentUser();
-    const paymentNames = ['Netflix', 'Spotify', 'Amazon Prime', 'Disney+', 'Hulu', 'Apple Music', 'YouTube Premium', 'Dropbox'];
-    const payments = Array.from({ length: 16 }).map((_, i) => ({
-        id: i + 1,
-        date: moment().add(Math.floor(Math.random() * 14) + 1, 'days'),
-        amount: (Math.random() * 20 + 2).toFixed(2) * 1,
-        name: paymentNames[Math.floor(Math.random() * paymentNames.length)]
-    }));
+    if (!user) {
+        return (
+            <div className="w-full h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold">Please log in to view your dashboard</h1>
+                </div>
+            </div>
+        );
+    }
+    var data = await pool.query("SELECT * FROM subscriptions WHERE userid = $1 AND status = 'active' AND auto_renew = true AND final_date is null OR final_date > NOW()", [user.id]);
+    console.log("Fetched data:", data.rows);
+    const payments = processData(data.rows);
+    console.log("Processed payments:", payments);
+    // const payments = Array.from({ length: 16 }).map((_, i) => ({
+    //     id: i + 1,
+    //     date: moment().add(Math.floor(Math.random() * 14) + 1, 'days'),
+    //     amount: (Math.random() * 20 + 2).toFixed(2) * 1,
+    //     name: paymentNames[Math.floor(Math.random() * paymentNames.length)]
+    // }));
     // Sort payments by date
     payments.sort((a, b) => a.date - b.date);
-    // Group payments by week
     const groupedPayments = payments.reduce((acc, payment) => {
-        const weekStart = payment.date.clone().startOf('week'); // Get the start of the week for the payment date
+        const weekStart = payment.date.clone().startOf('week');
         const weekKey = weekStart.format('YYYY-MM-DD');
         if (!acc[weekKey]) {
             acc[weekKey] = [];
@@ -48,9 +144,9 @@ export default async function DashboardPage() {
         "GBP": { units: { major: { symbol: "£" } } },
     }
     function getSymbol() {
-        if (!user) return "£"; // Default to GBP if no user
+        if (!user) return "£";
         const metadata = user.unsafeMetadata || {};
-        const currencyCode = metadata.currency || "GBP"; // Default to GBP if no currency set
+        const currencyCode = metadata.currency || "GBP";
         const currency = currencies[currencyCode];
         return currency ? currency.units.major.symbol : "£";
     }
@@ -80,14 +176,28 @@ export default async function DashboardPage() {
                         >
                             <h3 className="text-lg font-semibold">{payment.name}</h3>
                             <span>{payment.date.format('dddd Do MMMM YYYY')}</span>
-                            <span className={"text-4xl text-muted-foreground bottom-[1rem] absolute " + funnel_sans.className}>{getSymbol()}{payment.amount.toFixed(2)}</span>
+                            <div className="bottom-[1rem] absolute flex flex-row items-center justify-between w-full max-w-[90%]">
+                                <span className={"text-4xl text-muted-foreground " + funnel_sans.className}>{getSymbol()}{payment.amount.toFixed(2)}</span>
+                                <div className="flex flex-row items-center gap-2">
+                                    <Button className="cursor-pointer" size={"icon"} variant={"outline"} asChild>
+                                        <Link href={`/dashboard/payment/${payment.id}/view`}>
+                                            <Search />
+                                        </Link>
+                                    </Button>
+                                    <Button className="cursor-pointer" size={"icon"} variant={"outline"} asChild>
+                                        <Link href={`/dashboard/payment/${payment.id}/edit`}>
+                                            <Pencil />
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
                     ))}
                     <div
                         className="flex relative flex-col items-start bg-accent/10 p-4 rounded-lg border-2 border-accent-foreground/40 shadow-md h-40 min-w-0 backdrop-blur-md"
                     >
                         <h3 className="text-lg font-semibold">Add subscription</h3>
-                        <Dialog defaultOpen={true}>
+                        <Dialog>
                             <Button className={"bottom-[1rem] absolute cursor-pointer"} asChild>
                                 <DialogTrigger>
                                     Add
