@@ -33,8 +33,9 @@ function processData(payments) {
     var important_payments = [];
     // need to output date, id, amount, name
     payments.forEach(payment => {
-        var { date, id, amount, name, frequency, business_days_only, final_date, auto_renew } = payment;
-        date = moment(date);
+        console.log("Processing payment:", payment);
+        var { date, id, amount, name, frequency, business_days_only, final_date, auto_renew, start_date } = payment;
+        date = moment(start_date);
         if (final_date) {
             final_date = moment(final_date);
         } else {
@@ -51,33 +52,39 @@ function processData(payments) {
         // using the date, add the frequency, and check if any occur in the next 14 days
         var next_payment_date = date.clone();
         if (!date.isBefore(moment())) {
+            console.log("Payment with id:", id, "is in the future, using that date.");
             next_payment_date = date.clone(); // if the date is in the future, use that as the next payment date
         } else {
-            switch (frequency) {
-                case 'daily':
-                    next_payment_date.add(1, 'days');
-                    break;
-                case 'weekly':
-                    next_payment_date.add(1, 'weeks');
-                    break;
-                case 'bi-weekly':
-                    next_payment_date.add(2, 'weeks');
-                    break;
-                case 'monthly':
-                    next_payment_date.add(1, 'months');
-                    break;
-                case 'quarterly':
-                    next_payment_date.add(1, 'quarter');
-                    break;
-                case 'yearly':
-                    next_payment_date.add(1, 'years');
-                    break;
-                case 'one-time':
-                    next_payment_date = date.clone(); // one-time payments are just the date they were created
-                    break;
-                default:
-                    console.log("Skipping payment with id:", id, "as it has an invalid frequency:", frequency);
-                    return;
+            console.log("Payment with id:", id, "is in the past, calculating next payment date.");
+            // log frequency
+            console.log("Payment frequency is:", frequency);
+            while (next_payment_date.isBefore(moment())) {
+                switch (frequency) {
+                    case 'daily':
+                        next_payment_date.add(1, 'days');
+                        break;
+                    case 'weekly':
+                        next_payment_date.add(1, 'weeks');
+                        break;
+                    case 'bi-weekly':
+                        next_payment_date.add(2, 'weeks');
+                        break;
+                    case 'monthly':
+                        next_payment_date.add(1, 'months');
+                        break;
+                    case 'quarterly':
+                        next_payment_date.add(1, 'quarter');
+                        break;
+                    case 'yearly':
+                        next_payment_date.add(1, 'years');
+                        break;
+                    case 'one-time':
+                        next_payment_date = date.clone(); // one-time payments are just the date they were created
+                        break;
+                    default:
+                        console.log("Skipping payment with id:", id, "as it has an invalid frequency:", frequency);
+                        return;
+                }
             }
         }
         if (!next_payment_date.isBefore(moment().add(14, 'days'))) {
@@ -91,6 +98,7 @@ function processData(payments) {
                 next_payment_date.add(1, 'days');
             }
         }
+        console.log("Payment with id:", id, "has original date:", date.format('DD-MM-YYYY'), "next payment date:", next_payment_date.format('DD-MM-YYYY'));
         important_payments.push({
             date: next_payment_date,
             id: id,

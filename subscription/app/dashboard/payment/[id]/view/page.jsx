@@ -101,7 +101,11 @@ const nameToLogo = {
 function TextOrLogo({ name }) {
     const logo = nameToLogo[name.toLowerCase()];
     if (logo) {
-        return <img src={logo} alt={`${name} logo`} className="w-[10rem]" />;
+        return (
+            <div className="flex flex-col items-center bg-accent/90 rounded-lg shadow-md border-2 w-[50%] md:w-auto">
+                <img src={logo} alt={`${name} logo`} className="w-[10rem]" />
+            </div>
+        );
     }
     return <span className="text-lg font-semibold">{name}</span>;
 }
@@ -149,7 +153,6 @@ export default async function ViewPaymentPage({ params }) {
         );
     }
     const subscription = data.rows[0];
-
     const processedSubscription = processSubscription(subscription);
 
     return (
