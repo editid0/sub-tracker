@@ -107,7 +107,11 @@ function TextOrLogo({ name }) {
             </div>
         );
     }
-    return <span className="text-lg font-semibold">{name}</span>;
+    return (
+        <div className="flex flex-col items-center bg-accent/90 px-6 py-2 rounded-lg shadow-md border-2 w-[50%] md:w-auto">
+            <span className="text-2xl font-semibold">{name}</span>
+        </div>
+    );
 }
 
 export default async function ViewPaymentPage({ params }) {

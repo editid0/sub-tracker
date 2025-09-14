@@ -1,8 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUser } from "@clerk/nextjs";
 import { useDebounce } from "@uidotdev/usehooks";
+import { ChevronDownIcon } from "lucide-react";
 import moment from "moment-timezone";
 import { useEffect, useState } from "react";
 
@@ -83,9 +89,63 @@ export default function EditableFields({ subscription }) {
 
     return (
         <>
-            <div>
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Subscription Name" />
+            <div className="flex flex-col md:flex-row gap-6 md:gap-12 items-end flex-wrap">
+                <div className="flex flex-col">
+                    <label className="font-medium" htmlFor="subscription-name">Subscription Name</label>
+                    <Input id="subscription-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Subscription Name" className={"max-w-fit"} />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <Label htmlFor="date" className="px-1">
+                        Start of Billing Cycle
+                    </Label>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                id="date"
+                                className="w-48 justify-between font-normal"
+                            >
+                                {startDate ? startDate.format("MMMM D, YYYY") : "Select date"}
+                                <ChevronDownIcon />
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={startDate}
+                                captionLayout="dropdown"
+                                onSelect={(date) => {
+                                    setStartDate(date)
+                                }}
+                            />
+                        </PopoverContent>
+                    </Popover>
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="font-medium" htmlFor="amount">Amount ({currencySymbol})</label>
+                    <Input id="amount" type="number" value={amount_} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" className={"max-w-fit"} />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <Label htmlFor="frequency" className="px-1">
+                        Billing Frequency
+                    </Label>
+                    <Select value={frequency} onValueChange={(value) => setFrequency(value)} id="frequency">
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Frequency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="bi-weekly">Bi-Weekly</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                            <SelectItem value="quarterly">Quarterly</SelectItem>
+                            <SelectItem value="yearly">Yearly</SelectItem>
+                            <SelectItem value="one-time">One-Time</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
+
         </>
     )
 }

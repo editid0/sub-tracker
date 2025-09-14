@@ -87,9 +87,9 @@ function processData(payments) {
                 }
             }
         }
-        if (!next_payment_date.isBefore(moment().add(14, 'days'))) {
-            console.log(next_payment_date.format('DD-MM-YYYY'), "is not within the next 14 days.");
-            console.log("Skipping payment with id:", id, "as it is not coming up in the next 14 days.");
+        if (!next_payment_date.isBefore(moment().add(30, 'days'))) {
+            console.log(next_payment_date.format('DD-MM-YYYY'), "is not within the next 30 days.");
+            console.log("Skipping payment with id:", id, "as it is not coming up in the next 30 days.");
             return; // the payment is not coming up soon
         }
         // if the payment is only on business days, check if the next payment date is a business day, and add days until it isn't
