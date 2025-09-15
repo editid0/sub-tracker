@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -89,12 +90,12 @@ export default function EditableFields({ subscription }) {
 
     return (
         <>
-            <div className="flex flex-col md:flex-row gap-6 md:gap-12 items-end flex-wrap">
-                <div className="flex flex-col">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-12 items-end flex-wrap max-w-[25cm]">
+                <div className="flex flex-col w-full md:w-auto flex-shrink-0">
                     <label className="font-medium" htmlFor="subscription-name">Subscription Name</label>
                     <Input id="subscription-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Subscription Name" className={"max-w-fit"} />
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-full md:w-auto flex-shrink-0">
                     <Label htmlFor="date" className="px-1">
                         Start of Billing Cycle
                     </Label>
@@ -121,11 +122,11 @@ export default function EditableFields({ subscription }) {
                         </PopoverContent>
                     </Popover>
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-full md:w-auto flex-shrink-0">
                     <label className="font-medium" htmlFor="amount">Amount ({currencySymbol})</label>
                     <Input id="amount" type="number" value={amount_} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" className={"max-w-fit"} />
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 w-full md:w-auto flex-shrink-0">
                     <Label htmlFor="frequency" className="px-1">
                         Billing Frequency
                     </Label>
@@ -143,6 +144,18 @@ export default function EditableFields({ subscription }) {
                             <SelectItem value="one-time">One-Time</SelectItem>
                         </SelectContent>
                     </Select>
+                </div>
+                <div className="flex flex-row gap-1 w-full md:w-auto flex-shrink-0">
+                    <Checkbox checked={autoRenew} onCheckedChange={setAutoRenew} id="next-billing-date" />
+                    <Label htmlFor="next-billing-date" className="px-1">
+                        Auto renew
+                    </Label>
+                </div>
+                <div className="flex flex-row gap-1 w-full md:w-auto flex-shrink-0">
+                    <Checkbox checked={businessDaysOnly} onCheckedChange={setBusinessDaysOnly} id="business-days-only" />
+                    <Label htmlFor="business-days-only" className="px-1">
+                        Business days only
+                    </Label>
                 </div>
             </div>
 

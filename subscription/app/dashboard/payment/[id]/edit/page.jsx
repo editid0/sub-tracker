@@ -32,7 +32,7 @@ export default async function EditPaymentPage({ params }) {
 
     return (
         <>
-            <div className="mapbg max-w-[30cm] mx-auto w-full md:w-1/2 min-w-fit py-4 px-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl my-2">
+            <div className="mapbg max-w-[30cm] mx-auto lg:w-full md:w-1/2 min-w-fit py-4 px-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl my-2">
                 <h1 className="text-4xl font-bold text-center">Edit Subscription</h1>
                 <p className="text-center text-lg text-muted-foreground">Edit the details of your subscription below.</p>
             </div>
