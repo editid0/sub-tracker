@@ -94,7 +94,7 @@ export async function POST(req) {
     if (notes && notes.length > 500) {
         return new Response(JSON.stringify({ error: "Notes cannot exceed 500 characters" }), { status: 400 });
     }
-    if (notes && !/^(?:(?!\n{4,})[a-zA-Z0-9 .,!?@#$%^&*()_+\-=\[\]{}|\\;:'",<>\/`~\n])*$ /.test(notes)) {
+    if (notes && !/^(?:(?!\n{4,})[a-zA-Z0-9 .,!?@#$%^&*()_+\-=\[\]{}|\\;:'",<>\/`~\n])*$/.test(notes)) {
         return new Response(JSON.stringify({ error: "Notes contain invalid characters" }), { status: 400 });
     }
     if (!allowed_categories.includes(category)) {

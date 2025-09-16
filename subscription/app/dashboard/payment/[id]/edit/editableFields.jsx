@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@clerk/nextjs";
 import { useDebounce } from "@uidotdev/usehooks";
 import { ChevronDownIcon, LoaderCircle } from "lucide-react";
@@ -49,27 +50,27 @@ export default function EditableFields({ subscription }) {
         setTimeout(() => {
             setLoading(false);
         }, 1000);
-        // fetch(`/api/subscription/${subscription.id}`, {
-        //     method: "PUT",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({
-        //         name,
-        //         start_date: startDate ? startDate.format("YYYY-MM-DD") : null,
-        //         amount: parseFloat(amount) || 0,
-        //         frequency,
-        //         business_days_only: businessDaysOnly,
-        //         notes,
-        //         category,
-        //         payment_method: paymentMethod,
-        //         status,
-        //         auto_renew: autoRenew,
-        //         final_date: finalDate,
-        //     })
-        // });
-        // setSubmitted(true);
-        // setLoading(false);
+        fetch(`/api/subscription/${subscription.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                start_date: startDate ? startDate.format("DD/MM/YYYY") : null,
+                amount: parseFloat(amount) || 0,
+                frequency,
+                business_days_only: businessDaysOnly,
+                notes,
+                category,
+                payment_method: paymentMethod,
+                status,
+                auto_renew: autoRenew,
+                final_date: finalDate,
+            })
+        });
+        setSubmitted(true);
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -175,6 +176,47 @@ export default function EditableFields({ subscription }) {
                         </SelectContent>
                     </Select>
                 </div>
+                <div className="flex flex-col gap-1 w-full md:w-auto flex-shrink-0">
+                    <Label htmlFor="next-billing-date" className="px-1">
+                        Status
+                    </Label>
+                    <Select value={status} onValueChange={(value) => setStatus(value)} id="status">
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="active">Active</SelectItem>
+                            <SelectItem value="inactive">Inactive</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="flex flex-col gap-1 w-full md:w-auto flex-shrink-0">
+                    <Label htmlFor="category" className="px-1">
+                        Category
+                    </Label>
+                    <Select value={category} onValueChange={(value) => setCategory(value)} id="category">
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="entertainment">Entertainment</SelectItem>
+                            <SelectItem value="utilities">Utilities</SelectItem>
+                            <SelectItem value="food">Food</SelectItem>
+                            <SelectItem value="transportation">Transportation</SelectItem>
+                            <SelectItem value="healthcare">Healthcare</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="flex flex-col gap-1 w-full md:w-auto flex-shrink-0">
+                    <Label htmlFor="payment-method" className="px-1">
+                        Payment Method
+                    </Label>
+                    <Input id="payment-method" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} placeholder="Payment Method" className={"max-w-fit"} />
+                </div>
+            </div>
+            <div className="flex flex-col md:flex-row gap-x-6 md:gap-x-12 items-end flex-wrap max-w-[25cm] gap-y-4 mt-4">
                 <div className="flex flex-row gap-1 w-full md:w-auto flex-shrink-0">
                     <Checkbox checked={autoRenew} onCheckedChange={setAutoRenew} id="next-billing-date" />
                     <Label htmlFor="next-billing-date" className="px-1">
@@ -187,6 +229,12 @@ export default function EditableFields({ subscription }) {
                         Business days only
                     </Label>
                 </div>
+            </div>
+            <div className="flex flex-col w-full max-w-[25cm] mt-4 min-w-full">
+                <Label htmlFor="notes" className="px-1">
+                    Notes
+                </Label>
+                <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Notes" className={"min-w-full"} />
             </div>
             <div className="mt-4">
                 <Button variant="outline" className="cursor-pointer justify-between font-normal" onClick={submitChanges} disabled={submitted || loading}>
