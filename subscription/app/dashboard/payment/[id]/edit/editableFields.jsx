@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUser } from "@clerk/nextjs";
 import { useDebounce } from "@uidotdev/usehooks";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, LoaderCircle } from "lucide-react";
 import moment from "moment-timezone";
 import { useEffect, useState } from "react";
 
@@ -34,6 +34,7 @@ export default function EditableFields({ subscription }) {
     const [autoRenew, setAutoRenew] = useState(subscription.auto_renew || true);
     const [finalDate, setFinalDate] = useState(subscription.final_date || null);
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (isLoaded && user) {
@@ -41,6 +42,35 @@ export default function EditableFields({ subscription }) {
             setCurrencySymbol(userCurrency);
         }
     }, [isLoaded, user])
+
+    function submitChanges() {
+        if (submitted) return;
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+        }, 1000);
+        // fetch(`/api/subscription/${subscription.id}`, {
+        //     method: "PUT",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        //     body: JSON.stringify({
+        //         name,
+        //         start_date: startDate ? startDate.format("YYYY-MM-DD") : null,
+        //         amount: parseFloat(amount) || 0,
+        //         frequency,
+        //         business_days_only: businessDaysOnly,
+        //         notes,
+        //         category,
+        //         payment_method: paymentMethod,
+        //         status,
+        //         auto_renew: autoRenew,
+        //         final_date: finalDate,
+        //     })
+        // });
+        // setSubmitted(true);
+        // setLoading(false);
+    }
 
     useEffect(() => {
         switch (frequency) {
@@ -90,7 +120,7 @@ export default function EditableFields({ subscription }) {
 
     return (
         <>
-            <div className="flex flex-col md:flex-row gap-6 md:gap-12 items-end flex-wrap max-w-[25cm]">
+            <div className="flex flex-col md:flex-row gap-x-6 md:gap-x-12 items-end flex-wrap max-w-[25cm] gap-y-4">
                 <div className="flex flex-col w-full md:w-auto flex-shrink-0">
                     <label className="font-medium" htmlFor="subscription-name">Subscription Name</label>
                     <Input id="subscription-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Subscription Name" className={"max-w-fit"} />
@@ -157,6 +187,11 @@ export default function EditableFields({ subscription }) {
                         Business days only
                     </Label>
                 </div>
+            </div>
+            <div className="mt-4">
+                <Button variant="outline" className="cursor-pointer justify-between font-normal" onClick={submitChanges} disabled={submitted || loading}>
+                    {loading ? (<><LoaderCircle size={32} className="animate-spin" /><p>Saving...</p></>) : "Submit Changes"}
+                </Button>
             </div>
 
         </>
