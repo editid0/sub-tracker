@@ -52,7 +52,6 @@ export default function EditableFields({ subscription }) {
 	const [status, setStatus] = useState(subscription.status || "active");
 	const [autoRenew, setAutoRenew] = useState(subscription.auto_renew || true);
 	const [finalDate, setFinalDate] = useState(subscription.final_date || null);
-	const [submitted, setSubmitted] = useState(false);
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -63,7 +62,6 @@ export default function EditableFields({ subscription }) {
 	}, [isLoaded, user]);
 
 	function submitChanges() {
-		if (submitted) return;
 		setLoading(true);
 		setTimeout(() => {
 			setLoading(false);
@@ -90,10 +88,11 @@ export default function EditableFields({ subscription }) {
 		})
 			.then((res) => {
 				if (res.ok) {
-					setSubmitted(true);
 					setLoading(false);
 				} else {
-					console.error("Failed to update subscription");
+					// get json body
+					const data = res.json();
+					console.error(JSON.stringify(data));
 				}
 			})
 			.catch((error) => {
@@ -332,7 +331,7 @@ export default function EditableFields({ subscription }) {
 					variant="outline"
 					className="cursor-pointer justify-between font-normal"
 					onClick={submitChanges}
-					disabled={submitted || loading}
+					disabled={loading}
 				>
 					{loading ? (
 						<>
