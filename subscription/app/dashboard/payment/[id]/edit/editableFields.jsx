@@ -31,7 +31,9 @@ export default function EditableFields({ subscription }) {
 	// all the fields
 	const [name, setName] = useState(subscription.name || "");
 	const [startDate, setStartDate] = useState(
-		moment(subscription.start_date) || ""
+		subscription.start_date
+			? moment(subscription.start_date).utc()
+			: moment().hour(12).utc()
 	);
 	const [amount_, setAmount] = useState(subscription.amount || "");
 	const amount = useDebounce(amount_, 500);
@@ -74,7 +76,7 @@ export default function EditableFields({ subscription }) {
 			body: JSON.stringify({
 				id: subscription.id,
 				name,
-				start_date: startDate ? startDate.format("DD/MM/YYYY") : null,
+				start_date: startDate ? startDate.toISOString() : null,
 				amount: parseFloat(amount) || 0,
 				frequency,
 				business_days_only: businessDaysOnly,
@@ -137,10 +139,10 @@ export default function EditableFields({ subscription }) {
 		}
 		if (!businessDaysOnly) {
 			setNextBillingDate(
-				moment(startDate).add(frequencyCount, frequencyUnit)
+				startDate.clone().add(frequencyCount, frequencyUnit)
 			);
 		} else {
-			let nextDate = moment(startDate).add(frequencyCount, frequencyUnit);
+			let nextDate = startDate.clone().add(frequencyCount, frequencyUnit);
 			while (nextDate.isoWeekday() > 5) {
 				// Skip weekends
 				nextDate.add(1, "day");
@@ -176,7 +178,7 @@ export default function EditableFields({ subscription }) {
 								className="w-48 justify-between font-normal"
 							>
 								{startDate
-									? startDate.format("MMMM D, YYYY")
+									? startDate.utc().format("MMMM D, YYYY")
 									: "Select date"}
 								<ChevronDownIcon />
 							</Button>
@@ -187,10 +189,10 @@ export default function EditableFields({ subscription }) {
 						>
 							<Calendar
 								mode="single"
-								selected={startDate}
+								selected={startDate.toDate()}
 								captionLayout="dropdown"
 								onSelect={(date) => {
-									setStartDate(date);
+									setStartDate(moment(date).hour(12).utc());
 								}}
 							/>
 						</PopoverContent>

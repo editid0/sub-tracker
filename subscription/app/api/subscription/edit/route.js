@@ -27,10 +27,8 @@ export async function PUT(req) {
 		auto_renew,
 		final_date,
 	} = body;
-	start_date = moment(String(start_date).trim(), "DD/MM/YYYY", true);
-	final_date = final_date
-		? moment(String(final_date).trim(), "DD/MM/YYYY", true)
-		: null;
+	start_date = moment.utc(String(start_date).trim());
+	final_date = final_date ? moment.utc(String(final_date).trim()) : null;
 	if (
 		!name ||
 		!amount ||
@@ -174,7 +172,7 @@ export async function PUT(req) {
 			status: 400,
 		});
 	}
-	start_date = start_date.utc().format("YYYY-MM-DD");
+	start_date = start_date.toISOString();
 	if (final_date) {
 		if (!final_date.isValid()) {
 			return new Response(
@@ -182,7 +180,7 @@ export async function PUT(req) {
 				{ status: 400 }
 			);
 		}
-		final_date = final_date.utc().format("YYYY-MM-DD");
+		final_date = final_date.toISOString();
 	} else {
 		final_date = null;
 	}

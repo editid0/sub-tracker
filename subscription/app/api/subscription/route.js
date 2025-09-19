@@ -95,7 +95,7 @@ export async function POST(req) {
 				);
 		}
 	}
-	date = moment(date);
+	date = moment.utc(date);
 	//     {
 	//   name: 'netflix',
 	//   amount: 10,
@@ -191,13 +191,13 @@ export async function POST(req) {
 			{ status: 400 }
 		);
 	}
-	if (finalDate && moment(finalDate).isBefore(moment())) {
+	if (finalDate && moment.utc(finalDate).isBefore(moment.utc())) {
 		return new Response(
 			JSON.stringify({ error: "Final date cannot be in the past" }),
 			{ status: 400 }
 		);
 	}
-	if (finalDate && moment(finalDate).isBefore(date)) {
+	if (finalDate && moment.utc(finalDate).isBefore(date)) {
 		return new Response(
 			JSON.stringify({
 				error: "Final date cannot be before the start date",
@@ -237,7 +237,7 @@ export async function POST(req) {
 			paymentMethod,
 			status,
 			autoRenew,
-			finalDate ? moment(finalDate).toISOString() : null,
+			finalDate ? moment.utc(finalDate).toISOString() : null,
 			userId,
 		];
 		await pool.query(query, values);
