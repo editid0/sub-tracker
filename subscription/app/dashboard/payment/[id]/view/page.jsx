@@ -2,6 +2,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { Pool } from "pg";
 import moment from "moment-timezone";
 import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const pool = new Pool({
 	user: process.env.DB_USER,
@@ -178,6 +180,16 @@ export default async function ViewPaymentPage({ params }) {
 				<p className="text-center text-lg mt-2">
 					View information about a subscription here.
 				</p>
+				<div className="text-center">
+					<Button asChild>
+						<Link
+							href={`/dashboard/payment/${id}/edit`}
+							className="mt-4 mx-auto"
+						>
+							Edit Subscription
+						</Link>
+					</Button>
+				</div>
 			</div>
 			<div className="mapbg max-w-[30cm] mx-auto w-full md:w-1/2 min-w-fit py-4 px-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl my-2">
 				<h2 className="text-2xl font-semibold mb-4">

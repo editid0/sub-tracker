@@ -256,7 +256,7 @@ export default async function DashboardPage() {
 					{payments.map((payment) => (
 						<div
 							key={payment.id}
-							className="flex relative flex-col items-start bg-accent/10 p-4 rounded-lg border-2 border-accent-foreground/40 shadow-md h-40 min-w-0 backdrop-blur-md"
+							className="flex relative flex-col items-start bg-accent/10 p-4 rounded-lg border-2 border-accent-foreground/40 shadow-md min-w-0 h-50 backdrop-blur-md"
 						>
 							<h3 className="text-lg font-semibold">
 								{payment.name}
@@ -264,20 +264,19 @@ export default async function DashboardPage() {
 							<span>
 								{payment.date.format("dddd Do MMMM YYYY")}
 							</span>
-							<div className="bottom-[1rem] absolute flex flex-row items-center justify-between w-full max-w-[90%]">
-								<span
-									className={
-										"text-4xl text-muted-foreground " +
-										funnel_sans.className
-									}
-								>
-									{getSymbol()}
-									{payment.amount.toFixed(2)}
-								</span>
+							<span
+								className={
+									"text-4xl text-muted-foreground " +
+									funnel_sans.className
+								}
+							>
+								{getSymbol()}
+								{payment.amount.toFixed(2)}
+							</span>
+							<div className="bottom-[1rem] absolute flex flex-row items-center justify-between w-full max-w-[90%] flex-wrap">
 								<div className="flex flex-row items-center gap-2">
 									<Button
 										className="cursor-pointer"
-										size={"icon"}
 										variant={"outline"}
 										asChild
 									>
@@ -285,11 +284,11 @@ export default async function DashboardPage() {
 											href={`/dashboard/payment/${payment.id}/view`}
 										>
 											<Search />
+											<p>View</p>
 										</Link>
 									</Button>
 									<Button
 										className="cursor-pointer"
-										size={"icon"}
 										variant={"outline"}
 										asChild
 									>
@@ -297,6 +296,7 @@ export default async function DashboardPage() {
 											href={`/dashboard/payment/${payment.id}/edit`}
 										>
 											<Pencil />
+											<p>Edit</p>
 										</Link>
 									</Button>
 								</div>
