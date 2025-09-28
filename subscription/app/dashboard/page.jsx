@@ -316,7 +316,9 @@ export default async function DashboardPage() {
 							>
 								<DialogTrigger>Add</DialogTrigger>
 							</Button>
-							<DialogContent>
+							<DialogContent
+								className={"max-h-[90vh] overflow-auto"}
+							>
 								<DialogHeader>
 									<DialogTitle>
 										Add a subscription
