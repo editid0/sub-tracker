@@ -175,7 +175,10 @@ export default function InputForm() {
 				<h2 className="text-2xl font-semibold">
 					Subscription Added Successfully!
 				</h2>
-				<p className="mt-2">Thank you for adding your subscription.</p>
+				<p className="mt-2">
+					Thank you for adding your subscription, refresh the page to
+					see changes.
+				</p>
 				<Button className="mt-4" onClick={() => setSubmitted(false)}>
 					Add Another Subscription
 				</Button>
