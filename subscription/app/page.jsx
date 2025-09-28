@@ -7,7 +7,7 @@ import {
 	DialogDescription,
 	DialogHeader,
 	DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import Link from "next/link";
 
 const space = Space_Mono({
@@ -27,32 +27,62 @@ export default async function HomePage(context) {
 						<DialogTitle>Notes for testers and voters</DialogTitle>
 						<DialogDescription>
 							Hello, if you are testing this site or voting on it,
-							please press the sign in button and pick a random username
-							and password, the auth provider I am using doesn't have demo
-							accounts.
+							please press the sign in button and pick a random
+							username and password, the auth provider I am using
+							doesn't have demo accounts.
 						</DialogDescription>
 					</DialogHeader>
 				</DialogContent>
 			</Dialog>
 			<div className="mapbg mx-auto mt-10 flex min-h-[10cm] md:min-h-[15cm] w-4/5 flex-col items-center justify-center gap-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl">
-				<h1 className={"text-2xl md:text-8xl text-center font-semibold " + space.className}>Subscription Tracker</h1>
-				<p className={"md:text-3xl text-center " + space.className}>Track your subscriptions with ease, for free.</p>
+				<h1
+					className={
+						"text-2xl md:text-8xl text-center font-semibold " +
+						space.className
+					}
+				>
+					Subscription Tracker
+				</h1>
+				<p className={"md:text-3xl text-center " + space.className}>
+					Track your subscriptions with ease, for free.
+				</p>
 				<Button className="mt-4 cursor-pointer" size="lg" asChild>
-					<Link href={"/dashboard"}>
-						Get Started
-					</Link>
+					<Link href={"/dashboard"}>Get Started</Link>
 				</Button>
 			</div>
-			<div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-10 max-w-4/5 mx-auto">
+			<div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-10 max-w-4/5 mx-auto pb-8">
 				<div className="mapbg mx-auto mt-10 flex w-4/5 flex-col items-center justify-center gap-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl p-4">
-					<Image src={"https://picsum.photos/seed/1/600/400"} width={"600"} height={"400"} alt="Placeholder text" className="rounded-lg w-full" />
-					<h2 className="text-2xl font-semibold">Demo one</h2>
-					<p>Description of features here</p>
+					<Image
+						src={"/feature-1.png"}
+						width={"600"}
+						height={"400"}
+						alt="Placeholder text"
+						className="rounded-lg w-full"
+					/>
+					<h2 className="text-2xl font-semibold">
+						View upcoming transactions
+					</h2>
+					<p>
+						View which subscriptions are coming up in the next week,
+						or even in the next month.
+					</p>
 				</div>
 				<div className="mapbg mx-auto mt-10 flex w-4/5 flex-col items-center justify-center gap-4 rounded-2xl border-2 border-accent-foreground/40 bg-accent/30 shadow-xl p-4">
-					<Image src={"https://picsum.photos/seed/2/600/400"} width={"600"} height={"400"} alt="Placeholder text" className="rounded-lg w-full" />
-					<h2 className="text-2xl font-semibold">Demo two</h2>
-					<p>Description of features here</p>
+					<Image
+						src={"/feature-2.png"}
+						width={"600"}
+						height={"400"}
+						alt="Placeholder text"
+						className="rounded-lg w-full"
+					/>
+					<h2 className="text-2xl font-semibold">
+						View details about a subscription
+					</h2>
+					<p>
+						View detailed information about each of your
+						subscriptions, including pricing, renewal dates, and
+						more.
+					</p>
 				</div>
 			</div>
 		</>
