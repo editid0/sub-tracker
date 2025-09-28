@@ -55,6 +55,7 @@ export default function EditableFields({ subscription }) {
 	const [autoRenew, setAutoRenew] = useState(subscription.auto_renew || true);
 	const [finalDate, setFinalDate] = useState(subscription.final_date || null);
 	const [loading, setLoading] = useState(false);
+	const [deleteLoading, setDeleteLoading] = useState(false);
 
 	useEffect(() => {
 		if (isLoaded && user) {
@@ -63,11 +64,32 @@ export default function EditableFields({ subscription }) {
 		}
 	}, [isLoaded, user]);
 
+	function deleteSubscription() {
+		setDeleteLoading(true);
+		fetch(`/api/subscription/delete`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				id: subscription.id,
+			}),
+		})
+			.then((res) => {
+				if (res.ok) {
+					window.location.href = "/dashboard";
+				} else {
+					const data = res.json();
+					console.error(JSON.stringify(data));
+				}
+			})
+			.catch((error) => {
+				console.error("Error deleting subscription:", error);
+			});
+	}
+
 	function submitChanges() {
 		setLoading(true);
-		setTimeout(() => {
-			setLoading(false);
-		}, 1000);
 		fetch(`/api/subscription/edit`, {
 			method: "PUT",
 			headers: {
@@ -342,6 +364,24 @@ export default function EditableFields({ subscription }) {
 						</>
 					) : (
 						"Submit Changes"
+					)}
+				</Button>
+			</div>
+			<div className="bg-red-500/50 p-2 my-2 rounded-lg border-2 border-red-400">
+				<h3>Delete subscription?</h3>
+				<Button
+					variant="outline"
+					className="cursor-pointer justify-between font-normal"
+					onClick={deleteSubscription}
+					disabled={deleteLoading}
+				>
+					{loading ? (
+						<>
+							<LoaderCircle size={32} className="animate-spin" />
+							<p>Deleting...</p>
+						</>
+					) : (
+						"Delete Subscription"
 					)}
 				</Button>
 			</div>
