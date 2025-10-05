@@ -1,8 +1,24 @@
 # sub-tracker
-An open source subscription tracker
-
+An open source subscription tracker, with various features including:
+- Different billing cycles for different subcriptions
+- Pausable subscriptions
+- Final dates for subscriptions
+- View total cost of subscriptions this week
+- Completely free
 
 # Testing
 1. `bun run build`
 2. `bun run start`
-3. In a new terminal while the server is running: `bunx playwright test`
+
+# How to use
+If you want to self host, you can use the above commands, with the following contents in a .env file in the `subscription` folder:
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=...
+CLERK_SECRET_KEY=...
+DB_USER=<Username for DB>
+DB_HOST=<IP address for DB>
+DB_NAME=<DB name>
+DB_PASS=<Password for DB>
+DB_PORT=5432
+```
+If you want to use a hosted version, you can access that at https://sub.editid.uk
