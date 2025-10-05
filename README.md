@@ -24,3 +24,5 @@ DB_PASS=<Password for DB>
 DB_PORT=5432
 ```
 If you want to use a hosted version, you can access that at https://sub.editid.uk
+
+Once you are able to get onto the homepage, sign in using the navbar at the top, and then go to the dashboard. Once you're on the dashboard, you can simply add a subscription, fill in the required fields, save it, then refresh the page to see the new subscription.
