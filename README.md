@@ -4,6 +4,8 @@ An open source subscription tracker, with various features including:
 - Pausable subscriptions
 - Final dates for subscriptions
 - View total cost of subscriptions this week
+- Choose your own currency in settings (£/$/€)
+- Theme selector in settings (Light/Dark/System)
 - Completely free
 
 # Testing
